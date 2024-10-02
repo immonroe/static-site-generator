@@ -1,5 +1,6 @@
 import unittest
-
+from htmlnode import LeafNode
+from textnode import text_node_to_html_node
 from textnode import (
     TextNode,
     text_type_text,
@@ -40,6 +41,11 @@ class TestTextNode(unittest.TestCase):
             "TextNode(This is a text node, text, https://www.boot.dev)", repr(node)
         )
 
+    def test_text_node_to_html_text(self):
+        text_node = TextNode("This is a text", text_type_text)
+        html_node = text_node_to_html_node(text_node)
+        expected_html_node = LeafNode("", "This is a text")
+        self.assertEqual(html_node, expected_html_node)
 
 if __name__ == "__main__":
     unittest.main()
