@@ -1,7 +1,7 @@
 import unittest
 from node_splitter import split_nodes_delimiter
 from htmlnode import LeafNode
-from textnode import text_node_to_html_node
+from textnode import text_node_to_html_node, extract_markdown_images, extract_markdown_links
 from textnode import (
     TextNode,
     text_type_text,
@@ -65,6 +65,35 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         self.assertEqual(len(result), 4)
         self.assertEqual(result[0].text_type, "bold")
         self.assertEqual(result[2].text_type, "italic")
+
+class TestMarkdownExtraction(unittest.TestCase):
+    def test_extract_markdown_images(self):
+        text = "This is text with an ![image](https://example.com/image.jpg) and another ![second image](https://example.com/image2.png)"
+        expected = [("image", "https://example.com/image.jpg"), ("second image", "https://example.com/image2.png")]
+        self.assertEqual(extract_markdown_images(text), expected)
+
+    def test_extract_markdown_images_no_images(self):
+        text = "This is text with no images"
+        self.assertEqual(extract_markdown_images(text), [])
+
+    def test_extract_markdown_links(self):
+        text = "This is text with a [link](https://example.com) and [another link](https://example.com/page)"
+        expected = [("link", "https://example.com"), ("another link", "https://example.com/page")]
+        self.assertEqual(extract_markdown_links(text), expected)
+
+    def test_extract_markdown_links_no_links(self):
+        text = "This is text with no links"
+        self.assertEqual(extract_markdown_links(text), [])
+
+    def test_extract_markdown_mixed(self):
+        text = "Text with a ![image](https://example.com/image.jpg) and a [link](https://example.com)"
+        self.assertEqual(extract_markdown_images(text), [("image", "https://example.com/image.jpg")])
+        self.assertEqual(extract_markdown_links(text), [("link", "https://example.com")])
+
+    def test_extract_markdown_empty_string(self):
+        self.assertEqual(extract_markdown_images(""), [])
+        self.assertEqual(extract_markdown_links(""), [])
+    
 
 if __name__ == "__main__":
     unittest.main()

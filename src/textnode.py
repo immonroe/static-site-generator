@@ -1,4 +1,5 @@
 from htmlnode import LeafNode
+import re
 
 text_type_text = "text"
 text_type_bold = "bold"
@@ -44,3 +45,11 @@ def text_node_to_html_node(text_node):
         return transformation_map[text_node.text_type](text_node)
     else:
         raise Exception("Unknown TextNode type")
+    
+def extract_markdown_images(text):
+    found_images = re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+    return found_images
+
+def extract_markdown_links(text):
+    found_links = re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+    return found_links
