@@ -1,4 +1,5 @@
 import unittest
+from node_splitter import split_nodes_delimiter
 from htmlnode import LeafNode
 from textnode import text_node_to_html_node
 from textnode import (
@@ -46,6 +47,24 @@ class TestTextNode(unittest.TestCase):
         html_node = text_node_to_html_node(text_node)
         expected_html_node = LeafNode("", "This is a text")
         self.assertEqual(html_node, expected_html_node)
+
+class TestSplitNodesDelimiter(unittest.TestCase):
+    def test_basic_split(self):
+        node = TextNode("This is text with a `code block` word", "text")
+        result = split_nodes_delimiter([node], "`", "code")
+        self.assertEqual(len(result), 3)
+        self.assertEqual(result[0].text, "This is text with a ")
+        self.assertEqual(result[1].text, "code block")
+        self.assertEqual(result[1].text_type, "code")
+        self.assertEqual(result[2].text, " word")
+
+    def test_multiple_delimiters(self):
+        node = TextNode("**Bold** and *italic* text", "text")
+        result = split_nodes_delimiter([node], "**", "bold")
+        result = split_nodes_delimiter(result, "*", "italic")
+        self.assertEqual(len(result), 4)
+        self.assertEqual(result[0].text_type, "bold")
+        self.assertEqual(result[2].text_type, "italic")
 
 if __name__ == "__main__":
     unittest.main()
