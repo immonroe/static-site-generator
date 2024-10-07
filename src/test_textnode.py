@@ -130,6 +130,28 @@ class TestSplitNodesImage(unittest.TestCase):
         self.assertEqual(result[1].url, "https://example.com/image.jpg")
         self.assertEqual(result[2].text, " in text")
 
+    def test_split_multiple_images(self):
+        node = TextNode("![First](first.png) and ![Second](second.png)", text_type_text)
+        result = split_nodes_image([node])
+        
+        # Debug print statements
+        print("\nResult nodes:")
+        for i, n in enumerate(result):
+            print(f"{i}: {n.text} ({n.text_type})")
+        
+        # Original assertions
+        self.assertEqual(len(result), 4)
+        self.assertEqual(result[0].text, "First")
+        self.assertEqual(result[0].text_type, text_type_image)
+        self.assertEqual(result[0].url, "first.png")
+        self.assertEqual(result[1].text, " and ")
+        self.assertEqual(result[1].text_type, text_type_text)
+        self.assertEqual(result[2].text, "Second")
+        self.assertEqual(result[2].text_type, text_type_image)
+        self.assertEqual(result[2].url, "second.png")
+        self.assertEqual(result[3].text, "")
+        self.assertEqual(result[3].text_type, text_type_text)
+
     def test_no_links(self):
         node = TextNode("This is text with no links", text_type_text)
         result = split_nodes_link([node])

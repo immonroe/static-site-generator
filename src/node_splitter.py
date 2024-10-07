@@ -53,15 +53,19 @@ def split_nodes_image(old_nodes):
             
             new_nodes.append(TextNode(image[0], text_type_image, image[1]))
             
+            # Update current_text with the remaining part after the image
             if len(parts) > 1:
                 current_text = parts[1]
             else:
                 current_text = ""
         
-        if current_text:  # Text after the last image
+        # Ensure to add remaining text, even if it's an empty string
+        if current_text or len(images) > 0:
             new_nodes.append(TextNode(current_text, text_type_text))
     
     return new_nodes
+
+
 
 def split_nodes_link(old_nodes):
     new_nodes = []
