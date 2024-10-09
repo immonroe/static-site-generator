@@ -1,4 +1,5 @@
 import unittest
+
 from inline_markdown import (
     split_nodes_delimiter,
     split_nodes_image,
@@ -6,6 +7,7 @@ from inline_markdown import (
     text_to_textnodes,
     extract_markdown_links,
     extract_markdown_images,
+    markdown_to_blocks,
 )
 
 from textnode import (
@@ -198,6 +200,16 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             nodes,
         )
+
+    def test_multiple_blocks(self):
+        markdown = "Block 1\n\nBlock 2\n\nBlock 3"
+        expected = ["Block 1", "Block 2", "Block 3"]
+        self.assertEqual(markdown_to_blocks(markdown), expected)
+
+    def test_excessive_newlines(self):
+        markdown = "Block 1\n\n\n\nBlock 2"
+        expected = ["Block 1", "Block 2"]
+        self.assertEqual(markdown_to_blocks(markdown), expected)
 
 
 if __name__ == "__main__":

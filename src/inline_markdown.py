@@ -20,6 +20,27 @@ def text_to_textnodes(text):
     nodes = split_nodes_link(nodes)
     return nodes
 
+def markdown_to_blocks(markdown):
+    lines = markdown.split('\n')
+
+    blocks = []
+    current_block = []
+
+    for line in lines:
+        if line.strip() == '':
+            if current_block:
+                blocks.append('\n'.join(current_block))
+                current_block = []
+        else:
+            current_block.append(line)
+
+    if current_block:
+        blocks.append('\n'.join(current_block))
+
+    blocks = [block.strip() for block in blocks if block.strip()]
+
+    return blocks
+
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
