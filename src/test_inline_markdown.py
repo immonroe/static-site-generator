@@ -8,6 +8,7 @@ from inline_markdown import (
     extract_markdown_links,
     extract_markdown_images,
     markdown_to_blocks,
+    block_to_block_type,
 )
 
 from textnode import (
@@ -211,6 +212,39 @@ class TestInlineMarkdown(unittest.TestCase):
         expected = ["Block 1", "Block 2"]
         self.assertEqual(markdown_to_blocks(markdown), expected)
 
+    def test_paragraph(self):
+        assert block_to_block_type("This is a simple paragraph.") == "paragraph"
+
+    def test_heading(self):
+        assert block_to_block_type("# This is a heading") == "heading"
+        assert block_to_block_type("### This is a level 3 heading") == "heading"
+
+    def test_code(self):
+        assert block_to_block_type("```\nprint('Hello')\n```") == "code"
+
+    def test_quote(self):
+        assert block_to_block_type(">This is a quote") == "quote"
+        assert block_to_block_type("> This is a quote with a space after >") == "quote"
+        assert block_to_block_type(">Line 1\n>Line 2\n>Line 3") == "quote"
+        assert block_to_block_type("> Line 1\n> Line 2\n> Line 3") == "quote"
+
+    def test_unordered_list(self):
+        assert block_to_block_type("* Item 1\n* Item 2\n* Item 3") == "unordered_list"
+        assert block_to_block_type("- Item 1\n- Item 2\n- Item 3") == "unordered_list"
+        assert block_to_block_type("* Item 1\n- Item 2\n* Item 3") == "unordered_list"
+        
+        assert block_to_block_type("*  Item with two spaces\n* Normal item") == "unordered_list"
+        
+        assert block_to_block_type("* Item 1\nThis is not a list item") == "paragraph"
+    
+    def test_ordered_list(self):
+        assert block_to_block_type("1. First item\n2. Second item\n3. Third item") == "ordered_list"
+    
+        assert block_to_block_type("1.  Item with two spaces\n2. Normal item") == "ordered_list"
+        
+        assert block_to_block_type("1. First\n3. Third\n2. Second") == "ordered_list"
+        
+        assert block_to_block_type("1. First item\nThis is not a list item") == "paragraph"
 
 if __name__ == "__main__":
     unittest.main()

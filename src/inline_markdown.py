@@ -41,6 +41,23 @@ def markdown_to_blocks(markdown):
 
     return blocks
 
+def block_to_block_type(block: str) -> str:
+    lines = block.split('\n')
+    first_line = lines[0].strip()
+    
+    if first_line.startswith('#'):
+        if ' ' in first_line and first_line.index(' ') <= 6:
+            return 'heading'
+    elif block.startswith('```') and block.endswith('```'):
+        return 'code'
+    elif all(line.strip().startswith('>') for line in lines):
+        return 'quote'
+    elif all(line.strip().startswith(('*', '-')) for line in lines):
+        return 'unordered_list'
+    elif all(line.strip()[0].isdigit() and line.strip()[1:].startswith('. ') for line in lines):
+        return 'ordered_list'
+    
+    return 'paragraph'
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
