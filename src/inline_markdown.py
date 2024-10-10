@@ -1,5 +1,5 @@
 import re
-
+from htmlnode import HTMLNode
 from textnode import (
     TextNode,
     text_type_text,
@@ -19,6 +19,22 @@ def text_to_textnodes(text):
     nodes = split_nodes_image(nodes)
     nodes = split_nodes_link(nodes)
     return nodes
+
+def text_to_children(text):
+    # Initialize an empty list to store the child nodes
+    children = []
+    
+    # Process the text for inline markdown
+    # You'll use your previously created functions here
+    # For example:
+    # - split_nodes_delimiter
+    # - extract_markdown_links
+    # - text_node_to_html_node
+    
+    # ... Your processing logic here ...
+    
+    # Return the list of child nodes
+    return children
 
 def markdown_to_blocks(markdown):
     lines = markdown.split('\n')
@@ -58,6 +74,29 @@ def block_to_block_type(block: str) -> str:
         return 'ordered_list'
     
     return 'paragraph'
+
+def markdown_to_html_node(markdown):
+    blocks = markdown_to_blocks(markdown)
+
+    for block in blocks:
+        block_type = block_to_block_type(block)
+        if block_type == "paragraph":
+            node = HTMLNode(tag="p")
+            node.children = text_to_children(block)
+        elif block_type == "heading":
+            level = block.count('#')
+            node = HTMLNode(tag=f"h{level}")
+            node.children = text_to_children(block.lstrip('#').strip())
+    # ... handle other block types similarly
+        elif block_type == "code":
+            # Create code block node
+        elif block_type == "quote":
+            # Create code block node
+        elif block_type == "unordered_list":
+            # Create code block node
+        elif block_type == "ordered_list":
+            # Create code block node
+
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
